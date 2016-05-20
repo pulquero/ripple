@@ -89,16 +89,20 @@
 
         <dependency>
             <groupId>org.semarglproject</groupId>
-            <artifactId>semargl-sesame</artifactId>
+            <artifactId>semargl-core</artifactId>
             <version>0.6.1</version>
-            <exclusions>
-                <!-- there are several direct paths from Ripple to Rio -->
-                <exclusion>
-                    <groupId>org.openrdf.sesame</groupId>
-                    <artifactId>sesame-rio-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.semarglproject</groupId>
+            <artifactId>semargl-rdf</artifactId>
+            <version>0.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.semarglproject</groupId>
+            <artifactId>semargl-rdfa</artifactId>
+            <version>0.6.1</version>
+        </dependency>
+
         <dependency>
             <groupId>com.github.jsonld-java</groupId>
             <artifactId>jsonld-java-sesame</artifactId>
