@@ -1,7 +1,7 @@
 package net.fortytwo.ripple.model;
 
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Value;
 
 import java.util.LinkedHashMap;
 import java.util.ServiceLoader;

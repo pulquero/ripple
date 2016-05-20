@@ -3,8 +3,8 @@ package net.fortytwo.ripple.model.impl.sesame;
 import net.fortytwo.flow.Sink;
 import net.fortytwo.flow.rdf.diff.RDFDiffSink;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.Statement;
-import org.openrdf.sail.SailConnectionListener;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.sail.SailConnectionListener;
 
 import java.util.logging.Logger;
 

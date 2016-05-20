@@ -1,24 +1,24 @@
 package net.fortytwo.ripple.model.impl.sesame;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import net.fortytwo.flow.rdf.RDFSink;
 import net.fortytwo.flow.rdf.SailInserter;
 import net.fortytwo.flow.rdf.SesameInputAdapter;
 import net.fortytwo.flow.rdf.SesameOutputAdapter;
 import net.fortytwo.flow.rdf.SingleContextPipe;
 import net.fortytwo.ripple.test.RippleTestCase;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFParser;
-import org.openrdf.rio.Rio;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.memory.MemoryStore;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParser;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -28,7 +28,7 @@ import java.io.InputStream;
  */
 public class SesameTest extends RippleTestCase {
 
-    static int countStatements(final SailConnection sc, final URI context)
+    static int countStatements(final SailConnection sc, final IRI context)
             throws Exception {
         int count = 0;
 
@@ -91,7 +91,7 @@ public class SesameTest extends RippleTestCase {
         try {
             sc.begin();
 
-            URI ctxA = sail.getValueFactory().createURI("urn:test.AddFromInputStreamTest.ctxA#");
+            IRI ctxA = sail.getValueFactory().createIRI("urn:test.AddFromInputStreamTest.ctxA#");
 
             String s = "@prefix foo:  <http://example.org/foo#>.\n"
                     + "foo:a foo:b foo:c.";
@@ -165,7 +165,7 @@ public class SesameTest extends RippleTestCase {
                      final InputStream is,
                      final String baseUri,
                      final RDFFormat format,
-                     final URI context) throws Exception {
+                     final IRI context) throws Exception {
 
         RDFParser parser = Rio.createParser(format);
         SailConnection sc = sail.getConnection();

@@ -3,7 +3,7 @@ package net.fortytwo.ripple.model;
 import net.fortytwo.ripple.ListNode;
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.io.RipplePrintStream;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Value;
 
 import java.util.LinkedList;
 import java.util.List;

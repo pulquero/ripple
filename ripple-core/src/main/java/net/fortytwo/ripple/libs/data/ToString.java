@@ -6,7 +6,7 @@ import net.fortytwo.ripple.libs.graph.GraphLibrary;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.PrimitiveStackMapping;
 import net.fortytwo.ripple.model.RippleList;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 /**
  * A primitive which consumes a resource or literal value and produces its

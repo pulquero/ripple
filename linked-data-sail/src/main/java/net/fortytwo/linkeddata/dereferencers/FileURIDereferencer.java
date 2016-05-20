@@ -2,7 +2,8 @@ package net.fortytwo.linkeddata.dereferencers;
 
 import net.fortytwo.linkeddata.Dereferencer;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StreamRepresentation;
@@ -24,7 +25,7 @@ public class FileURIDereferencer implements Dereferencer {
     }
 
     public static MediaType findMediaType(final String uri) throws RippleException {
-        RDFFormat format = RDFFormat.forFileName(uri);
+        RDFFormat format = Rio.getParserFormatForFileName(uri);
         if (null == format) {
             throw new RippleException("no matching media type for " + uri);
         }

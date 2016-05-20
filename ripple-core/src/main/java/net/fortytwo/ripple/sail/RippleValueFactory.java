@@ -1,18 +1,23 @@
 package net.fortytwo.ripple.sail;
 
-import net.fortytwo.ripple.RippleException;
-import net.fortytwo.ripple.StringUtils;
-import org.openrdf.model.BNode;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.sail.SailException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
 
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.Date;
+
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.sail.SailException;
+
+import net.fortytwo.ripple.RippleException;
+import net.fortytwo.ripple.StringUtils;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -27,7 +32,7 @@ public class RippleValueFactory implements ValueFactory {
     }
 
     public Value nativize(final Value other) throws SailException {
-        if (other instanceof URI) {
+        if (other instanceof IRI) {
             String s = other.stringValue();
             if (s.startsWith(STRING_NAMESPACE)) {
                 try {
@@ -36,7 +41,7 @@ public class RippleValueFactory implements ValueFactory {
                     throw new SailException(e);
                 }
             } else {
-                return createURI(other.stringValue());
+                return createIRI(other.stringValue());
             }
         } else if (other instanceof Literal) {
             Literal l = (Literal) other;
@@ -55,13 +60,13 @@ public class RippleValueFactory implements ValueFactory {
     }
 
     @Override
-    public URI createURI(String s) {
-        return new RippleURI(s);
+    public IRI createIRI(String s) {
+        return new RippleIRI(s);
     }
 
     @Override
-    public URI createURI(String s, String s1) {
-        return new RippleURI(s + s1);
+    public IRI createIRI(String s, String s1) {
+        return new RippleIRI(s + s1);
     }
 
     @Override
@@ -85,7 +90,7 @@ public class RippleValueFactory implements ValueFactory {
     }
 
     @Override
-    public Literal createLiteral(String s, URI uri) {
+    public Literal createLiteral(String s, IRI uri) {
         return new RippleLiteral(s, uri);
     }
 
@@ -144,13 +149,50 @@ public class RippleValueFactory implements ValueFactory {
     }
 
     @Override
-    public Statement createStatement(Resource resource, URI uri, Value value) {
+    public Statement createStatement(Resource resource, IRI uri, Value value) {
         // Note: it is assumed that the argument values were also produced by this ValueFactory.
         return base.createStatement(resource, uri, value);
     }
 
     @Override
-    public Statement createStatement(Resource resource, URI uri, Value value, Resource resource1) {
+    public Statement createStatement(Resource resource, IRI uri, Value value, Resource resource1) {
         return base.createStatement(resource, uri, value, resource1);
     }
+
+	@Override
+	public URI createURI(String uri) {
+		return createIRI(uri);
+	}
+
+	@Override
+	public URI createURI(String namespace, String localName) {
+		return createIRI(namespace, localName);
+	}
+
+	@Override
+	public Literal createLiteral(String label, URI datatype) {
+		return createLiteral(label, (IRI) datatype);
+	}
+
+	@Override
+	public Literal createLiteral(BigDecimal bigDecimal) {
+        Literal other = base.createLiteral(bigDecimal);
+        return new RippleLiteral(other.getLabel(), other.getDatatype());
+	}
+
+	@Override
+	public Literal createLiteral(BigInteger bigInteger) {
+        Literal other = base.createLiteral(bigInteger);
+        return new RippleLiteral(other.getLabel(), other.getDatatype());
+	}
+
+	@Override
+	public Statement createStatement(Resource subject, URI predicate, Value object) {
+		return base.createStatement(subject, predicate, object);
+	}
+
+	@Override
+	public Statement createStatement(Resource subject, URI predicate, Value object, Resource context) {
+		return base.createStatement(subject, predicate, object);
+	}
 }

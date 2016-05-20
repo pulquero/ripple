@@ -3,8 +3,8 @@ package net.fortytwo.ripple.model;
 import net.fortytwo.flow.Sink;
 import net.fortytwo.ripple.Ripple;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 
 import java.net.URI;
 import java.util.logging.Level;

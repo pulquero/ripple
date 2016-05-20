@@ -2,7 +2,7 @@ package net.fortytwo.ripple.config;
 
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.URIMap;
-import org.openrdf.sail.Sail;
+import org.eclipse.rdf4j.sail.Sail;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

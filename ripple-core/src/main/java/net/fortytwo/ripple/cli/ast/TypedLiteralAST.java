@@ -5,8 +5,8 @@ import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.query.QueryEngine;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -28,8 +28,8 @@ public class TypedLiteralAST implements AST<RippleList> {
             public void put(final RippleList l) throws RippleException {
                 Object type = l.getFirst();
                 Value t = mc.toRDF(type);
-                if (t instanceof URI) {
-                    sink.put(mc.list().push(mc.valueOf(value, (URI) t)));
+                if (t instanceof IRI) {
+                    sink.put(mc.list().push(mc.valueOf(value, (IRI) t)));
                 } else {
                     qe.getErrorPrintStream().println("datatype does not map to a URI reference: " + type);
                 }

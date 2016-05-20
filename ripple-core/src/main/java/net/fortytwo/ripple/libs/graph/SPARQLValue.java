@@ -1,7 +1,7 @@
 package net.fortytwo.ripple.libs.graph;
 
-import org.openrdf.model.Value;
-import org.openrdf.query.BindingSet;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.query.BindingSet;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
 package net.fortytwo.flow.rdf.ranking;
 
-import org.openrdf.model.Resource;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

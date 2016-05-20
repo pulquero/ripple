@@ -2,8 +2,8 @@ package net.fortytwo.flow.rdf;
 
 import net.fortytwo.flow.Source;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Statement;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Statement;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

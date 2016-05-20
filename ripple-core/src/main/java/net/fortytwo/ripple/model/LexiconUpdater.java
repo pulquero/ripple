@@ -6,11 +6,11 @@ import net.fortytwo.flow.rdf.RDFSink;
 import net.fortytwo.flow.rdf.diff.RDFDiffSink;
 import net.fortytwo.ripple.Ripple;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 
 import java.util.regex.Pattern;
 
@@ -40,18 +40,18 @@ public class LexiconUpdater implements RDFDiffSink {
                 public void put(final Statement st) throws RippleException {
 //System.out.println( "st = " + st );
                     Resource subj = st.getSubject();
-                    URI pred = st.getPredicate();
+                    IRI pred = st.getPredicate();
                     Value obj = st.getObject();
 
                     synchronized (lexicon) {
-                        if (subj instanceof URI) {
-                            lexicon.addURI((URI) subj);
+                        if (subj instanceof IRI) {
+                            lexicon.addURI((IRI) subj);
                         }
 
                         lexicon.addURI(pred);
 
-                        if (obj instanceof URI) {
-                            lexicon.addURI((URI) obj);
+                        if (obj instanceof IRI) {
+                            lexicon.addURI((IRI) obj);
                         }
                     }
                 }

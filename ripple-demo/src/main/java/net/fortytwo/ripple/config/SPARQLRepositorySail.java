@@ -1,10 +1,10 @@
 package net.fortytwo.ripple.config;
 
 import net.fortytwo.sesametools.reposail.RepositorySail;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sparql.SPARQLRepository;
-import org.openrdf.sail.SailException;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
+import org.eclipse.rdf4j.sail.SailException;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

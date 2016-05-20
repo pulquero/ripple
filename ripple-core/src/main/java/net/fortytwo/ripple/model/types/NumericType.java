@@ -1,19 +1,20 @@
 package net.fortytwo.ripple.model.types;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.io.RipplePrintStream;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.RippleType;
 import net.fortytwo.ripple.model.StackMapping;
 import net.fortytwo.ripple.model.impl.sesame.SesameModelConnection;
-import org.openrdf.model.Literal;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.XMLSchema;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -25,7 +26,7 @@ public abstract class NumericType<T> implements RippleType<T> {
     }
 
     protected static final Map<Class, Datatype> datatypeByClass;
-    protected static final Map<URI, Datatype> datatypeByUri;
+    protected static final Map<IRI, Datatype> datatypeByUri;
 
     static {
         datatypeByClass = new HashMap<Class, Datatype>();
@@ -35,7 +36,7 @@ public abstract class NumericType<T> implements RippleType<T> {
         datatypeByClass.put(Integer.class, Datatype.INTEGER);
         datatypeByClass.put(Long.class, Datatype.LONG);
 
-        datatypeByUri = new HashMap<URI, Datatype>();
+        datatypeByUri = new HashMap<IRI, Datatype>();
         datatypeByUri.put(XMLSchema.DECIMAL, Datatype.DECIMAL);
         datatypeByUri.put(XMLSchema.DOUBLE, Datatype.DOUBLE);
         datatypeByUri.put(XMLSchema.FLOAT, Datatype.FLOAT);
@@ -160,7 +161,7 @@ public abstract class NumericType<T> implements RippleType<T> {
     }
 
     protected static Datatype dataTypeOf(final Literal l) {
-        URI datatype = l.getDatatype();
+        IRI datatype = l.getDatatype();
 
         return (null == datatype)
                 ? null

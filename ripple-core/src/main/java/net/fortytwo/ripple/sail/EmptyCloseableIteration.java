@@ -1,6 +1,6 @@
 package net.fortytwo.ripple.sail;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 
 /**
  * @param <T>

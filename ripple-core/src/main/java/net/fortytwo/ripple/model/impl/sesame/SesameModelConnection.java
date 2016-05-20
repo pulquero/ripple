@@ -1,6 +1,38 @@
 package net.fortytwo.ripple.model.impl.sesame;
 
-import info.aduna.iteration.CloseableIteration;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.impl.MapBindingSet;
+import org.eclipse.rdf4j.query.parser.ParsedQuery;
+import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
+import org.eclipse.rdf4j.sail.NotifyingSailConnection;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailConnectionListener;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.SailReadOnlyException;
+
 import net.fortytwo.flow.Buffer;
 import net.fortytwo.flow.Collector;
 import net.fortytwo.flow.NullSink;
@@ -22,36 +54,6 @@ import net.fortytwo.ripple.model.RippleType;
 import net.fortytwo.ripple.model.StackMapping;
 import net.fortytwo.ripple.model.StatementPatternQuery;
 import net.fortytwo.ripple.model.types.NumericType;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.impl.MapBindingSet;
-import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.sparql.SPARQLParser;
-import org.openrdf.sail.NotifyingSailConnection;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailConnectionListener;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.SailReadOnlyException;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -260,7 +262,7 @@ public class SesameModelConnection implements ModelConnection {
             if (null != rdf) {
                 Value vl = rdf;
                 if (vl instanceof Literal) {
-                    URI datatype = ((Literal) vl).getDatatype();
+                    IRI datatype = ((Literal) vl).getDatatype();
                     return (null != datatype && XMLSchema.BOOLEAN.equals(datatype)
                             && ((Literal) vl).getLabel().equals("true"));
                 }
@@ -307,7 +309,7 @@ public class SesameModelConnection implements ModelConnection {
         Value objValue = toRDF(obj);
 
         if (!(subjValue instanceof Resource)
-                || !(predValue instanceof URI)) {
+                || !(predValue instanceof IRI)) {
             return;
         }
 
@@ -315,7 +317,7 @@ public class SesameModelConnection implements ModelConnection {
             // Trick to be able to iterate through contexts even if none are given
             if (0 == contexts.length) {
                 sailConnection.addStatement(
-                        (Resource) subjValue, (URI) predValue, objValue);
+                        (Resource) subjValue, (IRI) predValue, objValue);
             } else {
                 for (Object context : contexts) {
                     Value contextValue;
@@ -335,7 +337,7 @@ public class SesameModelConnection implements ModelConnection {
                     }
 
                     sailConnection.addStatement(
-                            (Resource) subjValue, (URI) predValue, objValue, (Resource) contextValue);
+                            (Resource) subjValue, (IRI) predValue, objValue, (Resource) contextValue);
                 }
             }
         } catch (SailReadOnlyException e) {
@@ -368,7 +370,7 @@ public class SesameModelConnection implements ModelConnection {
             predValue = null;
         } else {
             predValue = toRDF(pred);
-            if (!(predValue instanceof URI)) {
+            if (!(predValue instanceof IRI)) {
                 return;
             }
         }
@@ -383,7 +385,7 @@ public class SesameModelConnection implements ModelConnection {
             // Trick to be able to iterate through contexts even if none are given
             if (0 == contexts.length) {
                 sailConnection.removeStatements(
-                        (Resource) subjValue, (URI) predValue, objValue);
+                        (Resource) subjValue, (IRI) predValue, objValue);
             } else {
                 for (Object context : contexts) {
                     Value contextValue;
@@ -403,7 +405,7 @@ public class SesameModelConnection implements ModelConnection {
                     }
 
                     sailConnection.removeStatements(
-                            (Resource) subjValue, (URI) predValue, objValue, (Resource) contextValue);
+                            (Resource) subjValue, (IRI) predValue, objValue, (Resource) contextValue);
                 }
             }
         } catch (SailReadOnlyException e) {
@@ -447,12 +449,12 @@ public class SesameModelConnection implements ModelConnection {
         return comparator;
     }
 
-    public URI valueOf(final java.net.URI s) throws RippleException {
+    public IRI valueOf(final java.net.URI s) throws RippleException {
         try {
-// return canonicalize(valueFactory.createURI(s));
+// return canonicalize(valueFactory.createIRI(s));
             // Note: do NOT automatically canonicalize values.  Sometimes one needs the original URI (e.g. so as to
             // remove statements), and not the native object it maps to.
-            return valueFactory.createURI(s.toString());
+            return valueFactory.createIRI(s.toString());
         } catch (Throwable t) {
             reset(true);
             throw new RippleException(t);
@@ -491,7 +493,7 @@ public class SesameModelConnection implements ModelConnection {
         }
     }
 
-    public Literal valueOf(final String s, final URI dataType)
+    public Literal valueOf(final String s, final IRI dataType)
             throws RippleException {
         try {
             return valueFactory.createLiteral(s, dataType);
@@ -619,7 +621,7 @@ public class SesameModelConnection implements ModelConnection {
         Value rdfObj = (null == obj) ? null : obj;
 
         if ((null == rdfSubj || rdfSubj instanceof Resource)
-                && (null == rdfPred || rdfPred instanceof URI)) {
+                && (null == rdfPred || rdfPred instanceof IRI)) {
             // Note: we must collect results in a buffer before putting anything
             //       into the sink, as inefficient as that is, because otherwise
             //       we might end up opening another RepositoryResult before
@@ -634,7 +636,7 @@ public class SesameModelConnection implements ModelConnection {
             try {
                 // Perform the query and collect results.
                 stmtIter = sailConnection.getStatements(
-                        (Resource) rdfSubj, (URI) rdfPred, rdfObj, false);
+                        (Resource) rdfSubj, (IRI) rdfPred, rdfObj, false);
                 //stmtIter.enableDuplicateFilter();
                 try {
                     while (stmtIter.hasNext()) {

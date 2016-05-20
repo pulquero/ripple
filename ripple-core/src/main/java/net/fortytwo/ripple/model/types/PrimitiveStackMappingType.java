@@ -5,7 +5,7 @@ import net.fortytwo.ripple.io.RipplePrintStream;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.PrimitiveStackMapping;
 import net.fortytwo.ripple.model.StackMapping;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

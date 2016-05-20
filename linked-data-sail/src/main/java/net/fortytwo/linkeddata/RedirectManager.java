@@ -1,11 +1,11 @@
 package net.fortytwo.linkeddata;
 
-import info.aduna.iteration.CloseableIteration;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
 
 /**
  * An object which keeps track of the 3xx redirects which have been followed in the course of dereferencing
@@ -28,7 +28,7 @@ public class RedirectManager {
      * @return whether any URI has already been dereferenced which redirects to the given document URI
      */
     public boolean existsRedirectTo(final String documentUri) throws SailException {
-        URI hashedDocumentUri = new URIImpl(RDFUtils.hashedUri(documentUri));
+        IRI hashedDocumentUri = SimpleValueFactory.getInstance().createIRI(RDFUtils.hashedUri(documentUri));
 
         CloseableIteration<? extends Statement, SailException> iter
                 = connection.getStatements(null, LinkedDataCache.CACHE_REDIRECTSTO, hashedDocumentUri, false);
@@ -45,14 +45,20 @@ public class RedirectManager {
      * @param documentUri the URI to which the original URI has been redirected
      */
     public void persistRedirect(final String thingUri, final String documentUri) throws SailException {
-        URI hashedThingUri = new URIImpl(RDFUtils.hashedUri(thingUri));
-        URI hashedDocumentUri = new URIImpl(RDFUtils.hashedUri(documentUri));
+        IRI hashedThingUri = SimpleValueFactory.getInstance().createIRI(RDFUtils.hashedUri(thingUri));
+        IRI hashedDocumentUri = SimpleValueFactory.getInstance().createIRI(RDFUtils.hashedUri(documentUri));
 
+        boolean wasTxnActive = connection.isActive();
+        if(!wasTxnActive) {
+        	connection.begin();
+        }
         connection.removeStatements(hashedThingUri, LinkedDataCache.CACHE_REDIRECTSTO, null);
         connection.addStatement(hashedThingUri, LinkedDataCache.CACHE_REDIRECTSTO, hashedDocumentUri);
 
         // note: a LinkedDataSail cache miss is currently not an atomic operation w.r.t. the underlying triple store
         connection.commit();
-        connection.begin();
+        if(wasTxnActive) {
+        	connection.begin();
+        }
     }
 }

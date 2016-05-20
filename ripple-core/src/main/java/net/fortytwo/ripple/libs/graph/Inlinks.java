@@ -7,8 +7,8 @@ import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.PrimitiveStackMapping;
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.model.impl.sesame.SesameModel;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
 
 import java.util.logging.Logger;
 

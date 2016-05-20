@@ -3,27 +3,27 @@ package net.fortytwo.linkeddata;
 import net.fortytwo.flow.rdf.SesameOutputAdapter;
 import net.fortytwo.ripple.Ripple;
 import net.fortytwo.ripple.RippleException;
-import org.apache.jena.iri.IRI;
 import org.apache.jena.iri.IRIFactory;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.Rio;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public final class RDFUtils {
-    private static final Logger logger = Logger.getLogger(RDFUtils.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RDFUtils.class.getName());
 
     private RDFUtils() {
     }
@@ -46,20 +46,20 @@ public final class RDFUtils {
         return new SesameOutputAdapter(writer);
     }
 
-    public static boolean isHttpUri(final URI uri) {
+    public static boolean isHttpUri(final IRI uri) {
         return uri.toString().startsWith("http://");
     }
 
-    public static URI inferContextURI(final Resource subject,
+    public static IRI inferContextURI(final Resource subject,
                                       final ValueFactory valueFactory)
             throws RippleException {
-        if (!(subject instanceof URI)) {
+        if (!(subject instanceof IRI)) {
             return null;
         } else {
             String s = removeFragmentIdentifier((subject).toString());
 
             try {
-                return valueFactory.createURI(s);
+                return valueFactory.createIRI(s);
             } catch (Throwable t) {
                 throw new RippleException(t);
             }
@@ -94,10 +94,10 @@ public final class RDFUtils {
 
     public static URL iriToUrl(final String iriStr) throws MalformedURLException {
         IRIFactory f = new IRIFactory();
-        IRI iri = f.create(iriStr);
+        org.apache.jena.iri.IRI iri = f.create(iriStr);
         boolean includeWarnings = false;
         if (iri.hasViolation(includeWarnings)) {
-            logger.warning("IRI has syntax violation: " + iriStr);
+            logger.warn("IRI has syntax violation: " + iriStr);
         }
 
         return iri.toURL();

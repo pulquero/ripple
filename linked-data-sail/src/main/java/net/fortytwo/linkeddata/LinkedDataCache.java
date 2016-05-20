@@ -1,5 +1,30 @@
 package net.fortytwo.linkeddata;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.rio.ParserConfig;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFHandler;
+import org.eclipse.rdf4j.rio.RDFParserRegistry;
+import org.eclipse.rdf4j.rio.helpers.BasicParserSettings;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.restlet.data.MediaType;
+import org.restlet.representation.Representation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.fortytwo.flow.rdf.RDFBuffer;
 import net.fortytwo.flow.rdf.RDFSink;
 import net.fortytwo.flow.rdf.SailInserter;
@@ -16,30 +41,6 @@ import net.fortytwo.ripple.Ripple;
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.StringUtils;
 import net.fortytwo.ripple.URIMap;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFHandler;
-import org.openrdf.rio.RDFParser;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.restlet.data.MediaType;
-import org.restlet.representation.Representation;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * A manager for a dynamic set of RDF graphs collected from the Web.
@@ -49,14 +50,14 @@ import java.util.Map;
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class LinkedDataCache {
-    private static final Logger logger = Logger.getLogger(LinkedDataCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(LinkedDataCache.class);
 
     public static final String
             CACHE_NS = "http://fortytwo.net/2012/02/linkeddata#";
-    public static final URI
-            CACHE_MEMO = new URIImpl(CACHE_NS + "memo"),
-            CACHE_REDIRECTSTO = new URIImpl(CACHE_NS + "redirectsTo"),
-            CACHE_GRAPH = null;  // the default context is used for caching metadata
+    public static final IRI
+            CACHE_MEMO = SimpleValueFactory.getInstance().createIRI(CACHE_NS + "memo"),
+            CACHE_REDIRECTSTO = SimpleValueFactory.getInstance().createIRI(CACHE_NS + "redirectsTo"),
+            CACHE_GRAPH = SimpleValueFactory.getInstance().createIRI("http://fortytwo.net/2012/02/linkeddata/cache");  // the default context is used for caching metadata
 
     private static final String[] NON_RDF_EXTENSIONS = {
             "123", "3dm", "3dmf", "3gp", "8bi", "aac", "ai", "aif", "app", "asf",
@@ -74,9 +75,9 @@ public class LinkedDataCache {
 
     private final int MINIMUM_CAPACITY = 100;
 
-    private final CachingMetadata metadata;
-    private final ValueFactory valueFactory;
-    private final boolean useBlankNodes;
+    private CachingMetadata metadata;
+    private ValueFactory valueFactory;
+    private boolean useBlankNodes;
 
     private URIMap uriMap;
     private boolean autoCommit = true;
@@ -100,7 +101,7 @@ public class LinkedDataCache {
     private DataStore dataStore;
 
     // single connection shared among all accessing threads
-    private final SailConnection sailConnection;
+    private SailConnection sailConnection;
 
     /**
      * Constructs a cache with the default settings, dereferencers, and rdfizers.
@@ -110,8 +111,12 @@ public class LinkedDataCache {
      * @throws RippleException if construction fails for any reason
      */
     public static LinkedDataCache createDefault(final Sail sail) throws RippleException {
-        LinkedDataCache cache = new LinkedDataCache(sail);
+    	LinkedDataCache cache = new LinkedDataCache(sail);
+    	configure(cache);
+    	return cache;
+    }
 
+    public static void configure(LinkedDataCache cache) throws RippleException {
         RedirectManager redirectManager = new RedirectManager(cache.getSailConnection());
 
         // Add URI dereferencers.
@@ -124,31 +129,22 @@ public class LinkedDataCache {
         cache.addDereferencer("file", new FileURIDereferencer());
         cache.addDereferencer("jar", new JarURIDereferencer());
 
-        RDFParser.DatatypeHandling datatypeHandling;
         String p = Ripple.getConfiguration().getString(LinkedDataSail.DATATYPE_HANDLING_POLICY);
-        datatypeHandling
-                = p.equals("ignore")
-                ? RDFParser.DatatypeHandling.IGNORE
-                : p.equals("verify")
-                ? RDFParser.DatatypeHandling.VERIFY
-                : p.equals("normalize")
-                ? RDFParser.DatatypeHandling.NORMALIZE
-                : null;
-        if (null == datatypeHandling) {
-            throw new RippleException("no such datatype handling policy: " + p);
-        }
+        ParserConfig parserConfig = new ParserConfig();
+        parserConfig.set(BasicParserSettings.FAIL_ON_UNKNOWN_DATATYPES, !p.equals("ignore"));
+        parserConfig.set(BasicParserSettings.VERIFY_DATATYPE_VALUES, p.equals("verify"));
+        parserConfig.set(BasicParserSettings.NORMALIZE_DATATYPE_VALUES, p.equals("normalize"));
 
         // Rdfizers for registered RDF formats
-        // TODO: 'tmp' is a hack to avoid a poorly-understood ConcurrentModificationException
-        Collection<RDFFormat> tmp = new LinkedList<RDFFormat>();
-        tmp.addAll(RDFFormat.values());
-        for (RDFFormat f : tmp) {
-            Rdfizer r = new VerbatimRdfizer(f, datatypeHandling);
+        for (RDFFormat f : RDFParserRegistry.getInstance().getKeys()) {
+            Rdfizer r = new VerbatimRdfizer(f, parserConfig);
             for (String type : f.getMIMETypes()) {
                 double qualityFactor = type.equals("application/rdf+xml") ? 1.0 : 0.5;
                 cache.addRdfizer(new MediaType(type), r, qualityFactor);
             }
         }
+
+        cache.addRdfizer(MediaType.TEXT_XML, new VerbatimRdfizer(RDFFormat.RDFXML, parserConfig), 0.4);
 
         // Additional rdfizers
         Rdfizer imageRdfizer = new ImageRdfizer();
@@ -157,15 +153,19 @@ public class LinkedDataCache {
         cache.addRdfizer(new MediaType("image/tiff"), imageRdfizer, 0.4);
         cache.addRdfizer(new MediaType("image/tiff-fx"), imageRdfizer, 0.4);
         // TODO: add an EXIF-based Rdfizer for RIFF WAV audio files
-
-        return cache;
     }
+
+    public LinkedDataCache() {}
 
     /**
      * @param sail underlying triple store for the cache
      * @throws RippleException if there is a configuration error
      */
     public LinkedDataCache(final Sail sail) throws RippleException {
+    	initialize(sail);
+    }
+
+    public void initialize(Sail sail) throws RippleException {
         try {
             sailConnection = sail.getConnection();
             sailConnection.begin();
@@ -175,7 +175,7 @@ public class LinkedDataCache {
 
         int capacity = Ripple.getConfiguration().getInt(LinkedDataSail.MEMORY_CACHE_CAPACITY);
         if (capacity < MINIMUM_CAPACITY) {
-            logger.log(Level.WARN, "LinkedDataSail.MEMORY_CACHE_CAPACITY is suspiciously low. Using "
+            logger.warn("LinkedDataSail.MEMORY_CACHE_CAPACITY is suspiciously low. Using "
                     + MINIMUM_CAPACITY);
         }
 
@@ -333,7 +333,7 @@ public class LinkedDataCache {
      * @param sc  a connection to a Sail
      * @return the current status of the URI, or null if it does not exist in the cache
      */
-    public CacheEntry.Status peek(final URI uri,
+    public CacheEntry.Status peek(final IRI uri,
                                   final SailConnection sc) throws RippleException {
         return peekOrRetrieve(uri, sc, false);
     }
@@ -345,14 +345,14 @@ public class LinkedDataCache {
      * @param sc  a connection to a Sail
      * @return the result of the dereferencing operation
      */
-    public CacheEntry.Status retrieve(final URI uri,
+    public CacheEntry.Status retrieve(final IRI uri,
                                       final SailConnection sc) throws RippleException {
         return peekOrRetrieve(uri, sc, true);
     }
 
     // Look up and create the memo for a URI in one atomic operation, avoiding races between threads
     // The status of a URI in the cache is Undetermined until the retrieval operation is completed.
-    private synchronized CacheEntry getSetMemo(final URI uri,
+    private synchronized CacheEntry getSetMemo(final IRI uri,
                                               final String graphUri,
                                               final SailConnection sc,
                                               final boolean doRetrieve) throws RippleException {
@@ -373,7 +373,7 @@ public class LinkedDataCache {
         return memo;
     }
 
-    private CacheEntry.Status peekOrRetrieve(final URI uri,
+    private CacheEntry.Status peekOrRetrieve(final IRI uri,
                                              final SailConnection sc,
                                              final boolean doRetrieve) throws RippleException {
         // Find the named graph which stores all information associated with this URI
@@ -412,6 +412,15 @@ public class LinkedDataCache {
 
         // Note: from this point on, we are committed to actually dereferencing the URI,
         // and failures are explicitly stored as caching metadata.
+        boolean wasTxnActive;
+        try {
+			wasTxnActive = sc.isActive();
+	        if(autoCommit && !wasTxnActive) {
+	        	sc.begin();
+	        }
+		} catch (SailException e) {
+			throw new RippleException(e);
+		}
         try {
             Representation rep;
 
@@ -440,7 +449,7 @@ public class LinkedDataCache {
             RDFBuffer buffer = new RDFBuffer(adder);
 
             // Note: any context information in the source document is discarded.
-            RDFSink pipe = new SingleContextPipe(buffer, valueFactory.createURI(graphUri), valueFactory);
+            RDFSink pipe = new SingleContextPipe(buffer, valueFactory.createIRI(graphUri), valueFactory);
 
             RDFHandler handler = new SesameInputAdapter(useBlankNodes
                     ? pipe
@@ -461,7 +470,7 @@ public class LinkedDataCache {
             // Only update the graph in the triple store if the operation was successful.
             if (CacheEntry.Status.Success == memo.getStatus()) {
                 try {
-                    sc.removeStatements(null, null, null, valueFactory.createURI(graphUri));
+                    sc.removeStatements(null, null, null, valueFactory.createIRI(graphUri));
                 } catch (SailException e) {
                     throw new RippleException(e);
                 }
@@ -475,7 +484,9 @@ public class LinkedDataCache {
             if (autoCommit) {
                 try {
                     sc.commit();
-                    sc.begin();
+                    if(wasTxnActive) {
+                    	sc.begin();
+                    }
                 } catch (SailException e) {
                     throw new RippleException(e);
                 }
@@ -543,7 +554,7 @@ public class LinkedDataCache {
         this.derefContexts = flag;
     }
 
-    private CacheEntry.Status logStatus(final URI uri,
+    private CacheEntry.Status logStatus(final IRI uri,
                                         final CacheEntry memo) {
         CacheEntry.Status status = memo.getStatus();
 
@@ -556,7 +567,7 @@ public class LinkedDataCache {
             msg.append(", rdfizer: ").append(memo.getRdfizer());
             msg.append("): ").append(status);
 
-            logger.info(msg);
+            logger.info(msg.toString());
         }
 
         return status;

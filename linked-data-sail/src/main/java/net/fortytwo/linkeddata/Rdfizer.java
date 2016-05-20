@@ -1,6 +1,6 @@
 package net.fortytwo.linkeddata;
 
-import org.openrdf.rio.RDFHandler;
+import org.eclipse.rdf4j.rio.RDFHandler;
 
 import java.io.InputStream;
 

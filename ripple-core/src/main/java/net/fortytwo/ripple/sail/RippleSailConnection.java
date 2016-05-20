@@ -1,6 +1,6 @@
 package net.fortytwo.ripple.sail;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.libs.control.ControlLibrary;
 import net.fortytwo.ripple.model.ModelConnection;
@@ -8,18 +8,19 @@ import net.fortytwo.ripple.model.Operator;
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.model.impl.sesame.SesameModelConnection;
 import net.fortytwo.ripple.query.LazyEvaluatingIterator;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.Dataset;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.query.algebra.evaluation.TripleSource;
-import org.openrdf.query.algebra.evaluation.impl.EvaluationStrategyImpl;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.helpers.SailConnectionWrapper;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.Dataset;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.algebra.TupleExpr;
+import org.eclipse.rdf4j.query.algebra.evaluation.TripleSource;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolver;
+import org.eclipse.rdf4j.query.algebra.evaluation.impl.EvaluationStrategyImpl;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.helpers.SailConnectionWrapper;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -27,12 +28,15 @@ import org.openrdf.sail.helpers.SailConnectionWrapper;
 public class RippleSailConnection extends SailConnectionWrapper {
     private final ModelConnection modelConnection;
     private final RippleValueFactory valueFactory;
+    private final FederatedServiceResolver serviceResolver;
 
     public RippleSailConnection(final ModelConnection modelConnection,
-                                final RippleValueFactory valueFactory) {
+                                final RippleValueFactory valueFactory,
+                                final FederatedServiceResolver serviceResolver) {
         super(((SesameModelConnection) modelConnection).getSailConnection());
         this.modelConnection = modelConnection;
         this.valueFactory = valueFactory;
+        this.serviceResolver = serviceResolver;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class RippleSailConnection extends SailConnectionWrapper {
             final boolean includeInferred) throws SailException {
         try {
             TripleSource tripleSource = new SailConnectionTripleSource(this, valueFactory, includeInferred);
-            EvaluationStrategyImpl strategy = new EvaluationStrategyImpl(tripleSource, dataset);
+            EvaluationStrategyImpl strategy = new EvaluationStrategyImpl(tripleSource, dataset, serviceResolver);
             return strategy.evaluate(query, bindings);
         } catch (QueryEvaluationException e) {
             throw new SailException(e);
@@ -58,7 +62,7 @@ public class RippleSailConnection extends SailConnectionWrapper {
 
     @Override
     public void addStatement(final Resource subject,
-                             final URI predicate,
+                             final IRI predicate,
                              final Value object,
                              final Resource... contexts) throws SailException {
         // When implementing this method, make sure that only RippleSesameValues are passed down
@@ -67,7 +71,7 @@ public class RippleSailConnection extends SailConnectionWrapper {
 
     @Override
     public void removeStatements(final Resource subject,
-                                 final URI predicate,
+                                 final IRI predicate,
                                  final Value object,
                                  final Resource... contexts) throws SailException {
         // Implement this method if/when addStatement is implemented
@@ -83,7 +87,7 @@ public class RippleSailConnection extends SailConnectionWrapper {
     @Override
     public CloseableIteration<? extends Statement, SailException> getStatements(
             Resource subject,
-            URI predicate,
+            IRI predicate,
             Value object,
             final boolean includeInferred,
             final Resource... contexts) throws SailException {
@@ -188,7 +192,7 @@ public class RippleSailConnection extends SailConnectionWrapper {
         private final CloseableIteration<RippleList, RippleException> iter;
         private final boolean inverse;
         private final Resource subject;
-        private final URI predicate;
+        private final IRI predicate;
         private final Value object;
         // TODO: use contexts?
         private final Resource[] contexts;
@@ -198,7 +202,7 @@ public class RippleSailConnection extends SailConnectionWrapper {
         public SolutionIteration(CloseableIteration<RippleList, RippleException> iter,
                                  boolean inverse,
                                  Resource subject,
-                                 URI predicate,
+                                 IRI predicate,
                                  Value object,
                                  Resource... contexts) throws SailException {
             this.iter = iter;

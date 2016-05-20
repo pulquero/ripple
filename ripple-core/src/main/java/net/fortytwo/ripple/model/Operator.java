@@ -3,10 +3,10 @@ package net.fortytwo.ripple.model;
 import net.fortytwo.flow.Sink;
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.util.ModelConnectionHelper;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

@@ -25,7 +25,7 @@ import net.fortytwo.ripple.model.types.StackMappingWrapperType;
 import net.fortytwo.ripple.model.types.StringLiteralType;
 import net.fortytwo.ripple.model.types.StringType;
 import net.fortytwo.ripple.model.types.URIType;
-import org.openrdf.sail.Sail;
+import org.eclipse.rdf4j.sail.Sail;
 
 import java.util.HashMap;
 import java.util.HashSet;

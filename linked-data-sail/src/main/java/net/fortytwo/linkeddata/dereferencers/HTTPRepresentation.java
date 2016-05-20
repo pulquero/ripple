@@ -1,18 +1,5 @@
 package net.fortytwo.linkeddata.dereferencers;
 
-import net.fortytwo.flow.rdf.HTTPUtils;
-import net.fortytwo.linkeddata.RDFUtils;
-import net.fortytwo.linkeddata.RedirectManager;
-import net.fortytwo.ripple.RippleException;
-import net.fortytwo.ripple.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.openrdf.sail.SailException;
-import org.restlet.data.MediaType;
-import org.restlet.representation.StreamRepresentation;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,14 +7,28 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.eclipse.rdf4j.sail.SailException;
+import org.restlet.data.MediaType;
+import org.restlet.representation.StreamRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.fortytwo.flow.rdf.HTTPUtils;
+import net.fortytwo.linkeddata.RDFUtils;
+import net.fortytwo.linkeddata.RedirectManager;
+import net.fortytwo.ripple.RippleException;
+import net.fortytwo.ripple.StringUtils;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class HTTPRepresentation extends StreamRepresentation {
-    private static final Logger logger = Logger.getLogger(HTTPRepresentation.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(HTTPRepresentation.class.getName());
 
     private InputStream inputStream;
     private HttpUriRequest method;
@@ -40,7 +41,7 @@ public class HTTPRepresentation extends StreamRepresentation {
         try {
             client = HTTPUtils.createClient(false);
         } catch (RippleException e) {
-            logger.log(Level.SEVERE, "failed to initialize", e);
+            logger.error("failed to initialize", e);
             throw new ExceptionInInitializerError(e);
         }
     }

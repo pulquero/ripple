@@ -1,13 +1,13 @@
 package net.fortytwo.linkeddata;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class CachingMetadata {
 
         try {
             if (null != sc) {
-                URI s = valueFactory.createURI(graphUri);
+                IRI s = valueFactory.createIRI(graphUri);
                 Literal memoLit = valueFactory.createLiteral(memo.toString());
                 sc.removeStatements(s, LinkedDataCache.CACHE_MEMO, null, LinkedDataCache.CACHE_GRAPH);
                 sc.addStatement(s, LinkedDataCache.CACHE_MEMO, memoLit, LinkedDataCache.CACHE_GRAPH);
@@ -85,7 +85,7 @@ public class CachingMetadata {
         CloseableIteration<? extends Statement, SailException> iter;
 
         iter = sc.getStatements(
-                valueFactory.createURI(graphUri),
+                valueFactory.createIRI(graphUri),
                 LinkedDataCache.CACHE_MEMO,
                 null,
                 false,

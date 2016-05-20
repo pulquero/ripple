@@ -11,11 +11,11 @@ import net.fortytwo.ripple.query.LazyStackEvaluator;
 import net.fortytwo.ripple.query.QueryEngine;
 import net.fortytwo.ripple.query.QueryPipe;
 import net.fortytwo.ripple.query.StackEvaluator;
-import org.openrdf.model.BNode;
-import org.openrdf.model.Literal;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -112,7 +112,7 @@ public class RippleScriptEngine implements ScriptEngine {
     }
 
     private Object toJavaObject(final Value v) throws ScriptException {
-        if (v instanceof URI) {
+        if (v instanceof IRI) {
             try {
                 return new java.net.URI(v.toString());
             } catch (URISyntaxException e) {
@@ -120,7 +120,7 @@ public class RippleScriptEngine implements ScriptEngine {
             }
         } else if (v instanceof Literal) {
             Literal l = (Literal) v;
-            URI datatype = l.getDatatype();
+            IRI datatype = l.getDatatype();
             if (null == datatype) {
                 return l.getLabel();
             } else if (XMLSchema.STRING.equals(datatype)) {

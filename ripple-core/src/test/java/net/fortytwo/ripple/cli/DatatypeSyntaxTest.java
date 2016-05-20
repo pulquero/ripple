@@ -3,8 +3,8 @@ package net.fortytwo.ripple.cli;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.test.RippleTestCase;
-import org.openrdf.model.Literal;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 import java.util.Collection;
 

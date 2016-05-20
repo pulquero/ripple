@@ -1,8 +1,8 @@
 package net.fortytwo.flow.rdf.ranking;
 
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.sail.SailConnection;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.sail.SailConnection;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -21,11 +21,11 @@ public class RDFSpreadVector implements WeightedVectorApproximation<Resource, Ha
     private double weight;
     private final SailConnection sailConnection;
     private final Resource[] seeds;
-    private final URI[] inPredicates, outPredicates;
+    private final IRI[] inPredicates, outPredicates;
 
     public RDFSpreadVector(final WeightedVector<Resource> vector,
-                           final URI[] inPredicates,
-                           final URI[] outPredicates,
+                           final IRI[] inPredicates,
+                           final IRI[] outPredicates,
                            final SailConnection sailConnection,
                            final Resource... seeds) {
         this.vector = vector;

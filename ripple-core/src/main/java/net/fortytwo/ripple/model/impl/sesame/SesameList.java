@@ -11,8 +11,8 @@ import net.fortytwo.ripple.model.Operator;
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.model.StatementPatternQuery;
 import net.fortytwo.ripple.util.ModelConnectionHelper;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 
 import java.util.HashMap;
 import java.util.Map;

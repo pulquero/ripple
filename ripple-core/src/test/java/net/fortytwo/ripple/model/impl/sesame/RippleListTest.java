@@ -8,9 +8,9 @@ import net.fortytwo.ripple.io.RDFImporter;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.test.RippleTestCase;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 import java.io.InputStream;
 import java.util.Iterator;
@@ -65,7 +65,7 @@ public class RippleListTest extends RippleTestCase {
         Value l2a = mc.valueOf("2a", XMLSchema.STRING);
         Value l2b = mc.valueOf("2b", XMLSchema.STRING);
 
-        head = createURI("urn:test.RippleListTest.FromRdfTest#simpleList", mc);
+        head = createIRI("urn:test.RippleListTest.FromRdfTest#simpleList", mc);
         created.clear();
         mc.toList(head, created);
         assertEquals(1, created.size());
@@ -73,7 +73,7 @@ public class RippleListTest extends RippleTestCase {
         allowed.put(mc.list().push(l2).push(l1));
         created.writeTo(verifySink);
 
-        head = createURI("urn:test.RippleListTest.FromRdfTest#firstBranchingList", mc);
+        head = createIRI("urn:test.RippleListTest.FromRdfTest#firstBranchingList", mc);
         created.clear();
         mc.toList(head, created);
         assertEquals(2, created.size());
@@ -82,7 +82,7 @@ public class RippleListTest extends RippleTestCase {
         allowed.put(mc.list().push(l2).push(l1b));
         created.writeTo(verifySink);
 
-        head = createURI("urn:test.RippleListTest.FromRdfTest#restBranchingList", mc);
+        head = createIRI("urn:test.RippleListTest.FromRdfTest#restBranchingList", mc);
         created.clear();
         mc.toList(head, created);
         assertEquals(2, created.size());
@@ -91,7 +91,7 @@ public class RippleListTest extends RippleTestCase {
         allowed.put(mc.list().push(l2b).push(l1));
         created.writeTo(verifySink);
 
-        head = createURI("urn:test.RippleListTest.FromRdfTest#firstAndRestBranchingList", mc);
+        head = createIRI("urn:test.RippleListTest.FromRdfTest#firstAndRestBranchingList", mc);
         created.clear();
         mc.toList(head, created);
         assertEquals(4, created.size());

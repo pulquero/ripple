@@ -5,10 +5,10 @@ import net.fortytwo.flow.Sink;
 import net.fortytwo.flow.diff.DiffSink;
 import net.fortytwo.flow.rdf.RDFSink;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Statement;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

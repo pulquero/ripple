@@ -1,18 +1,19 @@
 package net.fortytwo.ripple.sail;
 
-import net.fortytwo.ripple.model.RippleList;
-import org.openrdf.model.BNode;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.impl.LiteralImpl;
-
 import java.util.Random;
+
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.LiteralImpl;
+import org.eclipse.rdf4j.model.impl.SimpleLiteral;
+
+import net.fortytwo.ripple.model.RippleList;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
-public class RippleLiteral extends LiteralImpl implements RippleSesameValue, BNode {
+public class RippleLiteral extends SimpleLiteral implements RippleSesameValue, BNode {
     private RippleList list = null;
 
     public RippleLiteral(String label) {
@@ -23,7 +24,7 @@ public class RippleLiteral extends LiteralImpl implements RippleSesameValue, BNo
         super(label, language);
     }
 
-    public RippleLiteral(String label, URI datatype) {
+    public RippleLiteral(String label, IRI datatype) {
         super(label, datatype);
     }
 

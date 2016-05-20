@@ -1,21 +1,22 @@
 package net.fortytwo.ripple.model;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+
 import net.fortytwo.flow.Buffer;
 import net.fortytwo.flow.Sink;
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.sail.RippleSesameValue;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -33,10 +34,10 @@ public class GetStatementsQuery {
     private static final boolean STRING_LITERALS_EQUIVALENT_TO_PLAIN_LITERALS = true;
 
     // FIXME: this is temporary
-    private static final ValueFactory VALUE_FACTORY = new ValueFactoryImpl();
+    private static final ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
 
     public final Resource subject;
-    public final URI predicate;
+    public final IRI predicate;
     public final Value object;
     public final Resource[] contexts;
     public Type type = Type.SP_O;
@@ -48,13 +49,13 @@ public class GetStatementsQuery {
                 case SP_O:
                     type = Type.SP_O;
                     subject = getResource(patternQuery.getSubject(), mc);
-                    predicate = getURI(patternQuery.getPredicate(), mc);
+                    predicate = getIRI(patternQuery.getPredicate(), mc);
                     object = null;
                     break;
                 case PO_S:
                     type = Type.PO_S;
                     subject = null;
-                    predicate = getURI(patternQuery.getPredicate(), mc);
+                    predicate = getIRI(patternQuery.getPredicate(), mc);
                     object = getValue(patternQuery.getObject(), mc);
                     break;
                 case SO_P:
@@ -88,8 +89,8 @@ public class GetStatementsQuery {
         }
     }
 
-    private URI getURI(final Object rv, final ModelConnection mc) throws RippleException, ClassCastException {
-        return (URI) mc.toRDF(rv);
+    private IRI getIRI(final Object rv, final ModelConnection mc) throws RippleException, ClassCastException {
+        return (IRI) mc.toRDF(rv);
     }
 
     private Resource getResource(final Object rv, final ModelConnection mc)
@@ -109,7 +110,7 @@ public class GetStatementsQuery {
         if (STRING_LITERALS_EQUIVALENT_TO_PLAIN_LITERALS
                 && null != object
                 && object instanceof Literal) {
-            URI datatype = ((Literal) object).getDatatype();
+            IRI datatype = ((Literal) object).getDatatype();
             if (null == datatype) {
                 Literal newObj = VALUE_FACTORY.createLiteral(((Literal) object).getLabel(), XMLSchema.STRING);
                 getStatementsPrivate(results, sc, subject, predicate, newObj);
@@ -123,7 +124,7 @@ public class GetStatementsQuery {
     private void getStatementsPrivate(final Sink<Statement> results,
                                       final SailConnection sc,
                                       Resource subject,
-                                      URI predicate,
+                                      IRI predicate,
                                       Value object) throws RippleException {
         if (null != object && object instanceof RippleSesameValue) {
             object = ((RippleSesameValue) object).getNativeValue();

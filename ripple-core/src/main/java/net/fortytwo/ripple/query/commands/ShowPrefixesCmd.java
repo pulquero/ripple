@@ -6,7 +6,7 @@ import net.fortytwo.ripple.io.RipplePrintStream;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.query.Command;
 import net.fortytwo.ripple.query.QueryEngine;
-import org.openrdf.model.Namespace;
+import org.eclipse.rdf4j.model.Namespace;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,15 +1,17 @@
 package net.fortytwo.linkeddata.dereferencers;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.restlet.representation.Representation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.fortytwo.linkeddata.Dereferencer;
 import net.fortytwo.linkeddata.LinkedDataCache;
 import net.fortytwo.linkeddata.RedirectManager;
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.StringUtils;
-import org.apache.log4j.Logger;
-import org.restlet.representation.Representation;
-
-import java.util.HashSet;
-import java.util.Set;
 
 // Note: throughout this implementation, the caching context of a URI and
 //       is the same as its success or failure 'memo'.
@@ -19,7 +21,7 @@ import java.util.Set;
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class HTTPURIDereferencer implements Dereferencer {
-    private static final Logger logger = Logger.getLogger(HTTPURIDereferencer.class);
+    private static final Logger logger = LoggerFactory.getLogger(HTTPURIDereferencer.class);
 
     // FIXME: temporary
     private final LinkedDataCache linkedDataCache;

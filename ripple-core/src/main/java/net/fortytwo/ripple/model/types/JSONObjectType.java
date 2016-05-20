@@ -8,7 +8,7 @@ import net.fortytwo.ripple.model.StackMapping;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Value;
 
 import java.util.Collection;
 import java.util.Iterator;

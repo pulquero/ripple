@@ -10,10 +10,10 @@ import net.fortytwo.ripple.query.Command;
 import net.fortytwo.ripple.query.commands.DefineListCmd;
 import net.fortytwo.ripple.query.commands.DefinePrefixCmd;
 import net.fortytwo.ripple.query.commands.RedefineListCmd;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.helpers.RDFParserBase;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.helpers.RDFParserBase;
 
 import java.io.IOException;
 import java.io.InputStream;

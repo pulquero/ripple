@@ -1,8 +1,8 @@
 package net.fortytwo.ripple.sail;
 
 import net.fortytwo.ripple.model.RippleList;
-import org.openrdf.model.Value;
-import org.openrdf.model.impl.BNodeImpl;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.BNodeImpl;
 
 import java.util.UUID;
 

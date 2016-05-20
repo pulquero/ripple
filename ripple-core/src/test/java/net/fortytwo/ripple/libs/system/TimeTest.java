@@ -2,9 +2,9 @@ package net.fortytwo.ripple.libs.system;
 
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.test.RippleTestCase;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 import java.util.Collection;
 

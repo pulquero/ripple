@@ -6,7 +6,7 @@ import net.fortytwo.ripple.RippleProperties;
 import net.fortytwo.ripple.URIMap;
 import net.fortytwo.sesametools.readonly.ReadOnlySail;
 import net.fortytwo.sesametools.replay.RecorderSail;
-import org.openrdf.sail.Sail;
+import org.eclipse.rdf4j.sail.Sail;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

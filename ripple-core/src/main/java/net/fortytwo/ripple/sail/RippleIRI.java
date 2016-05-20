@@ -1,16 +1,17 @@
 package net.fortytwo.ripple.sail;
 
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.SimpleIRI;
+
 import net.fortytwo.ripple.model.RippleList;
-import org.openrdf.model.Value;
-import org.openrdf.model.impl.URIImpl;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
-public class RippleURI extends URIImpl implements RippleSesameValue {
+public class RippleIRI extends SimpleIRI implements RippleSesameValue {
     private RippleList list = null;
 
-    public RippleURI(String uriString) {
+    public RippleIRI(String uriString) {
         super(uriString);
     }
 

@@ -1,21 +1,20 @@
 package net.fortytwo.ripple.model;
 
-import info.aduna.iteration.CloseableIteration;
+import java.util.Date;
+
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+
 import net.fortytwo.flow.Sink;
 import net.fortytwo.flow.Source;
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.io.RipplePrintStream;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.QueryEvaluationException;
-
-import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.Date;
 
 /**
  * A transactional connection to a <code>Model</code>.
@@ -117,7 +116,7 @@ public interface ModelConnection {
      * @return the resulting RDF value
      * @throws RippleException if the argument is not a valid URI
      */
-    URI valueOf(java.net.URI uri) throws RippleException;
+    IRI valueOf(java.net.URI uri) throws RippleException;
 
     /**
      * Construct a date/time value.
@@ -147,7 +146,7 @@ public interface ModelConnection {
      * @throws RippleException if the arguments do not define a valid literal
      */
     // TODO: this should use an implementation-independent URI class
-    Literal valueOf(String label, URI datatype) throws RippleException;
+    Literal valueOf(String label, IRI datatype) throws RippleException;
 
     /**
      * Finds the "canonical" value, in Ripple space, for a given RDF value.

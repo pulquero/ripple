@@ -5,9 +5,9 @@ import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.PrimitiveStackMapping;
 import net.fortytwo.ripple.model.RippleList;
-import org.openrdf.model.Literal;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  * A primitive which consumes a literal value and produces its data type (if
@@ -47,7 +47,7 @@ public class Type extends PrimitiveStackMapping {
         stack = stack.getRest();
 
         if (v instanceof Literal) {
-            URI type = ((Literal) v).getDatatype();
+            IRI type = ((Literal) v).getDatatype();
 
             if (null != type) {
                 solutions.put(

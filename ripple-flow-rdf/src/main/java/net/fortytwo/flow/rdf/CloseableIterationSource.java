@@ -1,6 +1,6 @@
 package net.fortytwo.flow.rdf;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import net.fortytwo.flow.Sink;
 import net.fortytwo.flow.Source;
 import net.fortytwo.ripple.RippleException;

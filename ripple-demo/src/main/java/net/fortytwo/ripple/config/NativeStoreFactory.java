@@ -4,9 +4,9 @@ import net.fortytwo.ripple.Ripple;
 import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.RippleProperties;
 import net.fortytwo.ripple.URIMap;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.nativerdf.NativeStore;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 
 import java.io.File;
 

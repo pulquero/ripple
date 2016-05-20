@@ -1,9 +1,9 @@
 package net.fortytwo.ripple.sail;
 
-import info.aduna.iteration.CloseableIteration;
-import org.openrdf.model.Statement;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.sail.SailException;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.sail.SailException;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

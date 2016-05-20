@@ -2,7 +2,7 @@ package net.fortytwo.ripple.model.types;
 
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.RippleType;
-import org.openrdf.model.BNode;
+import org.eclipse.rdf4j.model.BNode;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

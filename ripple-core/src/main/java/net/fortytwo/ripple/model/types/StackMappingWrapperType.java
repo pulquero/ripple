@@ -6,7 +6,7 @@ import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.RippleType;
 import net.fortytwo.ripple.model.StackMapping;
 import net.fortytwo.ripple.model.StackMappingWrapper;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  * The data type of a wrapper for a stack mapping with a settable RDF equivalent

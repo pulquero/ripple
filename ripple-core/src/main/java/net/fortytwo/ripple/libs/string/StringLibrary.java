@@ -4,10 +4,10 @@ import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.model.Library;
 import net.fortytwo.ripple.model.LibraryLoader;
 import net.fortytwo.ripple.model.ModelConnection;
-import org.openrdf.model.Literal;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 /**
  * A collection of string manipulation primitives.
@@ -53,7 +53,7 @@ public class StringLibrary extends Library {
         for (Object o : operands) {
             Value v = mc.toRDF(o);
             if (v instanceof Literal) {
-                URI datatype = ((Literal) v).getDatatype();
+                IRI datatype = ((Literal) v).getDatatype();
 
                 if (null != datatype && datatype.equals(XMLSchema.STRING)) {
                     stringTyped = true;

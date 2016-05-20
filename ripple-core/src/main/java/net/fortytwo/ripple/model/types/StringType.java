@@ -6,8 +6,8 @@ import net.fortytwo.ripple.io.RipplePrintStream;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.StackMapping;
 import net.fortytwo.ripple.model.impl.sesame.SesameModelConnection;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

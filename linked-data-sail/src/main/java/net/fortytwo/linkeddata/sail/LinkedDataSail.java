@@ -1,18 +1,22 @@
 package net.fortytwo.linkeddata.sail;
 
+import java.io.File;
+
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolver;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolverClient;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolverImpl;
+import org.eclipse.rdf4j.sail.NotifyingSail;
+import org.eclipse.rdf4j.sail.NotifyingSailConnection;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailChangedListener;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.StackableSail;
+import org.eclipse.rdf4j.sail.helpers.AbstractSail;
+
 import net.fortytwo.linkeddata.LinkedDataCache;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.sail.NotifyingSail;
-import org.openrdf.sail.NotifyingSailConnection;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailChangedListener;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.StackableSail;
-import org.openrdf.sail.helpers.SailBase;
-
-import java.io.File;
 
 /**
  * A dynamic storage layer which treats the Semantic Web as a single global graph of linked data.
@@ -20,7 +24,7 @@ import java.io.File;
  *
  * @author Joshua Shinavier (http://fortytwo.net)
  */
-public class LinkedDataSail extends SailBase implements StackableSail, NotifyingSail {
+public class LinkedDataSail extends AbstractSail implements StackableSail, NotifyingSail, FederatedServiceResolverClient {
     public static final String
             CACHE_LIFETIME = "net.fortytwo.linkeddata.cacheLifetime",
             DATATYPE_HANDLING_POLICY = "net.fortytwo.linkeddata.datatypeHandlingPolicy",
@@ -29,6 +33,13 @@ public class LinkedDataSail extends SailBase implements StackableSail, Notifying
     private final LinkedDataCache cache;
 
     private Sail baseSail;
+
+    private FederatedServiceResolver serviceResolver = new FederatedServiceResolverImpl();
+
+    public LinkedDataSail(LinkedDataCache cache)
+    {
+    	this.cache = cache;
+    }
 
     /**
      * @param baseSail base Sail which provides a storage layer for aggregated RDF data.
@@ -62,16 +73,16 @@ public class LinkedDataSail extends SailBase implements StackableSail, Notifying
 
     @Override
     public NotifyingSailConnection getConnection() throws SailException {
-        SailConnection sc = getConnectionInternal();
+        SailConnection sc = super.getConnection();
         return (NotifyingSailConnection) sc;
     }
 
-    protected synchronized SailConnection getConnectionInternal() throws SailException {
-        return new LinkedDataSailConnection(this, baseSail, cache);
+    protected SailConnection getConnectionInternal() throws SailException {
+        return new LinkedDataSailConnection(this, baseSail, cache, serviceResolver);
     }
 
     public File getDataDir() {
-        throw new UnsupportedOperationException();
+		return baseSail.getDataDir();
     }
 
     public ValueFactory getValueFactory() {
@@ -79,8 +90,14 @@ public class LinkedDataSail extends SailBase implements StackableSail, Notifying
         return baseSail.getValueFactory();
     }
 
-    public void initialize() throws SailException {
-        // Do not initialize the base Sail; it is initialized independently.
+    protected void initializeInternal() throws SailException {
+    	baseSail.initialize();
+        try {
+			cache.initialize(baseSail);
+			LinkedDataCache.configure(cache);
+		} catch (RippleException e) {
+			throw new SailException(e);
+		}
     }
 
     public boolean isWritable() throws SailException {
@@ -95,7 +112,7 @@ public class LinkedDataSail extends SailBase implements StackableSail, Notifying
     }
 
     public void setDataDir(final File dataDir) {
-        throw new UnsupportedOperationException();
+		baseSail.setDataDir(dataDir);
     }
 
     protected void shutDownInternal() throws SailException {
@@ -117,6 +134,13 @@ public class LinkedDataSail extends SailBase implements StackableSail, Notifying
         this.baseSail = baseSail;
     }
 
+	public void setFederatedServiceResolver(FederatedServiceResolver resolver) {
+		serviceResolver = resolver;
+		if (baseSail instanceof FederatedServiceResolverClient) {
+			((FederatedServiceResolverClient)baseSail).setFederatedServiceResolver(resolver);
+		}
+	}
+
     /**
      * @return this LinkedDataSail's cache manager
      */
@@ -124,4 +148,3 @@ public class LinkedDataSail extends SailBase implements StackableSail, Notifying
         return cache;
     }
 }
-

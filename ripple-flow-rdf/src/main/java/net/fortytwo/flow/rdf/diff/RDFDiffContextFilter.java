@@ -4,9 +4,9 @@ import net.fortytwo.flow.Sink;
 import net.fortytwo.flow.diff.DiffSink;
 import net.fortytwo.flow.rdf.RDFSink;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
 
 import java.util.HashMap;
 import java.util.Iterator;

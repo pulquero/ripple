@@ -5,10 +5,10 @@ import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.model.types.KeyValueType;
 import net.fortytwo.ripple.model.types.NumericType;
 import net.fortytwo.ripple.util.ModelConnectionHelper;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -114,7 +114,7 @@ public class RippleComparator implements Comparator<Object> {
             Value sesameValue = (Value) value;
 
             if (sesameValue instanceof Literal) {
-                URI datatype = ((Literal) sesameValue).getDatatype();
+                IRI datatype = ((Literal) sesameValue).getDatatype();
 
                 if (null == datatype) {
                     String language = ((Literal) sesameValue).getLanguage();

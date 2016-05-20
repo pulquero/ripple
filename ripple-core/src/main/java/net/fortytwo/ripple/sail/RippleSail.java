@@ -5,21 +5,31 @@ import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.model.Model;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.impl.sesame.SesameModel;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
+
+import org.eclipse.rdf4j.IsolationLevel;
+import org.eclipse.rdf4j.IsolationLevels;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolver;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolverClient;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolverImpl;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
-public class RippleSail implements Sail {
+public class RippleSail implements Sail, FederatedServiceResolverClient {
 
     private final RippleValueFactory valueFactory = new RippleValueFactory(new ValueFactoryImpl());
     private final Model model;
+
+    private FederatedServiceResolver serviceResolver = new FederatedServiceResolverImpl();
 
     public RippleSail(final Model model) {
         this.model = model;
@@ -58,7 +68,7 @@ public class RippleSail implements Sail {
         } catch (RippleException e) {
             throw new SailException(e);
         }
-        return new RippleSailConnection(mc, valueFactory);
+        return new RippleSailConnection(mc, valueFactory, serviceResolver);
     }
 
     @Override
@@ -80,4 +90,19 @@ public class RippleSail implements Sail {
     public boolean isWritable() throws SailException {
         return true;
     }
+
+	@Override
+	public List<IsolationLevel> getSupportedIsolationLevels() {
+		return Collections.<IsolationLevel>singletonList(IsolationLevels.NONE);
+	}
+
+	@Override
+	public IsolationLevel getDefaultIsolationLevel() {
+		return IsolationLevels.NONE;
+	}
+
+	@Override
+	public void setFederatedServiceResolver(FederatedServiceResolver resolver) {
+		this.serviceResolver = resolver;
+	}
 }

@@ -1,8 +1,8 @@
 package net.fortytwo.linkeddata;
 
 import org.junit.Test;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.memory.MemoryStore;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 import static org.junit.Assert.assertTrue;
 

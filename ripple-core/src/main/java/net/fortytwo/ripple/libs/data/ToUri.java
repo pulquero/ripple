@@ -6,7 +6,7 @@ import net.fortytwo.ripple.libs.graph.GraphLibrary;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.PrimitiveStackMapping;
 import net.fortytwo.ripple.model.RippleList;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Value;
 
 import java.net.URI;
 

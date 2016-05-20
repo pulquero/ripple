@@ -7,8 +7,8 @@ import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.query.Command;
 import net.fortytwo.ripple.query.QueryEngine;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -51,7 +51,7 @@ public class DefineListCmd extends Command {
             mc.internalize(expr);
             mc.commit();
 
-            qe.getLexicon().addURI((URI) id);
+            qe.getLexicon().addURI((IRI) id);
             mc.getModel().getSpecialValues().put(id, expr);
         }
     }

@@ -2,7 +2,7 @@ package net.fortytwo.ripple.model.types;
 
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.StackMapping;
-import org.openrdf.model.Literal;
+import org.eclipse.rdf4j.model.Literal;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

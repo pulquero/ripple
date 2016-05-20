@@ -9,7 +9,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParserRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +102,7 @@ public class HTTPUtils {
 
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (RDFFormat f : RDFFormat.values()) {
+        for (RDFFormat f : RDFParserRegistry.getInstance().getKeys()) {
             if (first) {
                 first = false;
             } else {

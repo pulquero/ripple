@@ -4,13 +4,13 @@ import net.fortytwo.flow.Sink;
 import net.fortytwo.flow.rdf.RDFSink;
 import net.fortytwo.ripple.Ripple;
 import net.fortytwo.ripple.RippleException;
-import org.openrdf.model.BNode;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -36,7 +36,7 @@ public class BNodeToURIFilter implements RDFSink {
 
                 if (s || o || c) {
                     Resource subj = s ? bnodeToUri((BNode) st.getSubject()) : st.getSubject();
-                    URI pred = st.getPredicate();
+                    IRI pred = st.getPredicate();
                     Value obj = o ? bnodeToUri((BNode) st.getObject()) : st.getObject();
                     Resource con = c ? bnodeToUri((BNode) st.getContext()) : st.getContext();
 
@@ -55,8 +55,8 @@ public class BNodeToURIFilter implements RDFSink {
         cmtSink = sink.commentSink();
     }
 
-    private URI bnodeToUri(final BNode bnode) {
-        return valueFactory.createURI(Ripple.RANDOM_URN_PREFIX + bnode.getID());
+    private IRI bnodeToUri(final BNode bnode) {
+        return valueFactory.createIRI(Ripple.RANDOM_URN_PREFIX + bnode.getID());
     }
 
     public Sink<Statement> statementSink() {

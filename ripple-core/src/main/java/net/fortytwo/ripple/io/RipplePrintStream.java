@@ -5,12 +5,12 @@ import net.fortytwo.ripple.StringUtils;
 import net.fortytwo.ripple.model.Lexicon;
 import net.fortytwo.ripple.model.ModelConnection;
 import net.fortytwo.ripple.model.RippleType;
-import org.openrdf.model.BNode;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -34,8 +34,8 @@ public class RipplePrintStream extends PrintStream {
             throw new NullPointerException();
         }
 
-        if (v instanceof URI) {
-            printURI((URI) v);
+        if (v instanceof IRI) {
+            printIRI((IRI) v);
         } else if (v instanceof Literal) {
             printLiteral((Literal) v);
         } else if (v instanceof BNode) {
@@ -64,15 +64,15 @@ public class RipplePrintStream extends PrintStream {
         }
     }
 
-    private void printURIRef(final URI uri) {
+    private void printIRIRef(final IRI uri) {
         print("<" + StringUtils.escapeURIString(uri.toString()) + ">");
     }
 
-    private void printURI(final URI uri) throws RippleException {
+    private void printIRI(final IRI uri) throws RippleException {
         String symbol = lexicon.findSymbol(uri);
 
         if (null == symbol) {
-            printURIRef(uri);
+            printIRIRef(uri);
         } else {
             print(symbol);
         }
@@ -80,7 +80,7 @@ public class RipplePrintStream extends PrintStream {
 
     // TODO: handle literals with special types but whose labels are badly formatted.
     private void printLiteral(final Literal l) throws RippleException {
-        URI datatype = l.getDatatype();
+        IRI datatype = l.getDatatype();
         String label = l.getLabel();
 
         if (null != datatype) {
@@ -114,10 +114,10 @@ public class RipplePrintStream extends PrintStream {
         }
     }
 
-    public void printTypedLiteral(final String label, final URI datatype) throws RippleException {
+    public void printTypedLiteral(final String label, final IRI datatype) throws RippleException {
         printEscapedString(label);
         print("^^");
-        printURI(datatype);
+        printIRI(datatype);
     }
 
     public void printBoolean(final boolean v) {

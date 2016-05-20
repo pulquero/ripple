@@ -4,8 +4,8 @@ import net.fortytwo.flow.Sink;
 import net.fortytwo.flow.diff.DiffSink;
 import net.fortytwo.flow.rdf.RDFSink;
 import net.fortytwo.flow.rdf.SynchronizedRDFSink;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Statement;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Statement;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)

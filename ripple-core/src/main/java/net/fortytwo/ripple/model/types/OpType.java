@@ -10,7 +10,7 @@ import net.fortytwo.ripple.model.Operator;
 import net.fortytwo.ripple.model.RippleList;
 import net.fortytwo.ripple.model.RippleType;
 import net.fortytwo.ripple.model.StackMapping;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Value;
 
 import java.net.URI;
 

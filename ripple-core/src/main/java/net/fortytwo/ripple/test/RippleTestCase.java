@@ -16,14 +16,14 @@ import net.fortytwo.ripple.query.QueryPipe;
 import net.fortytwo.ripple.query.StackEvaluator;
 import org.junit.After;
 import org.junit.Before;
-import org.openrdf.model.URI;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.RDFS;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.memory.MemoryStore;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -248,7 +248,7 @@ public abstract class RippleTestCase extends TestCase {
         assertCollectorsEqual(expected, actual);
     }
 
-    protected URI createURI(final String s,
+    protected IRI createIRI(final String s,
                             final ModelConnection mc) throws RippleException {
         return mc.valueOf(java.net.URI.create(s));
     }
