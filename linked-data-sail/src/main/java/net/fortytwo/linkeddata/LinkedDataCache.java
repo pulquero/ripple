@@ -117,7 +117,7 @@ public class LinkedDataCache {
     }
 
     public static void configure(LinkedDataCache cache) throws RippleException {
-        RedirectManager redirectManager = new RedirectManager(cache.getSailConnection());
+        RedirectManager redirectManager = new RedirectManager(cache.getSailConnection(), cache.getValueFactory());
 
         // Add URI dereferencers.
         HTTPURIDereferencer hdref = new HTTPURIDereferencer(cache, redirectManager);
@@ -216,7 +216,11 @@ public class LinkedDataCache {
         }
     }
 
-    public synchronized SailConnection getSailConnection() throws RippleException {
+    public ValueFactory getValueFactory() {
+    	return valueFactory;
+    }
+
+    public SailConnection getSailConnection() throws RippleException {
         return sailConnection;
     }
 

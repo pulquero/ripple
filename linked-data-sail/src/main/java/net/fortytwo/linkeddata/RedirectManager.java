@@ -1,9 +1,9 @@
 package net.fortytwo.linkeddata;
 
 import org.eclipse.rdf4j.common.iteration.CloseableIteration;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.sail.SailConnection;
 import org.eclipse.rdf4j.sail.SailException;
 
@@ -17,9 +17,11 @@ import org.eclipse.rdf4j.sail.SailException;
  */
 public class RedirectManager {
     private final SailConnection connection;
+    private final ValueFactory valueFactory;
 
-    public RedirectManager(SailConnection connection) {
+    public RedirectManager(SailConnection connection, ValueFactory valueFactory) {
         this.connection = connection;
+        this.valueFactory = valueFactory;
     }
 
     /**
@@ -28,10 +30,10 @@ public class RedirectManager {
      * @return whether any URI has already been dereferenced which redirects to the given document URI
      */
     public boolean existsRedirectTo(final String documentUri) throws SailException {
-        IRI hashedDocumentUri = SimpleValueFactory.getInstance().createIRI(RDFUtils.hashedUri(documentUri));
+        IRI hashedDocumentUri = valueFactory.createIRI(RDFUtils.hashedUri(documentUri));
 
         CloseableIteration<? extends Statement, SailException> iter
-                = connection.getStatements(null, LinkedDataCache.CACHE_REDIRECTSTO, hashedDocumentUri, false);
+                = connection.getStatements(null, LinkedDataCache.CACHE_REDIRECTSTO, hashedDocumentUri, false, LinkedDataCache.CACHE_GRAPH);
         try {
             return iter.hasNext();
         } finally {
@@ -45,15 +47,15 @@ public class RedirectManager {
      * @param documentUri the URI to which the original URI has been redirected
      */
     public void persistRedirect(final String thingUri, final String documentUri) throws SailException {
-        IRI hashedThingUri = SimpleValueFactory.getInstance().createIRI(RDFUtils.hashedUri(thingUri));
-        IRI hashedDocumentUri = SimpleValueFactory.getInstance().createIRI(RDFUtils.hashedUri(documentUri));
+        IRI hashedThingUri = valueFactory.createIRI(RDFUtils.hashedUri(thingUri));
+        IRI hashedDocumentUri = valueFactory.createIRI(RDFUtils.hashedUri(documentUri));
 
         boolean wasTxnActive = connection.isActive();
         if(!wasTxnActive) {
         	connection.begin();
         }
-        connection.removeStatements(hashedThingUri, LinkedDataCache.CACHE_REDIRECTSTO, null);
-        connection.addStatement(hashedThingUri, LinkedDataCache.CACHE_REDIRECTSTO, hashedDocumentUri);
+        connection.removeStatements(hashedThingUri, LinkedDataCache.CACHE_REDIRECTSTO, null, LinkedDataCache.CACHE_GRAPH);
+        connection.addStatement(hashedThingUri, LinkedDataCache.CACHE_REDIRECTSTO, hashedDocumentUri, LinkedDataCache.CACHE_GRAPH);
 
         // note: a LinkedDataSail cache miss is currently not an atomic operation w.r.t. the underlying triple store
         connection.commit();
