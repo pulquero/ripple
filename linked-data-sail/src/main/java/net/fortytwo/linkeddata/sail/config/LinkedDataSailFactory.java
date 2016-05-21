@@ -1,11 +1,15 @@
 package net.fortytwo.linkeddata.sail.config;
 
+import org.eclipse.rdf4j.rio.ParserConfig;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.sail.Sail;
 import org.eclipse.rdf4j.sail.config.SailConfigException;
 import org.eclipse.rdf4j.sail.config.SailFactory;
 import org.eclipse.rdf4j.sail.config.SailImplConfig;
+import org.restlet.data.MediaType;
 
 import net.fortytwo.linkeddata.LinkedDataCache;
+import net.fortytwo.linkeddata.rdfizers.VerbatimRdfizer;
 import net.fortytwo.linkeddata.sail.LinkedDataSail;
 
 public class LinkedDataSailFactory implements SailFactory {
@@ -39,6 +43,10 @@ public class LinkedDataSailFactory implements SailFactory {
 		if (config instanceof LinkedDataSailConfig) {
 			LinkedDataSailConfig ldConfig = (LinkedDataSailConfig)config;
 
+			// hard-code config for now
+			ParserConfig parserConfig = new ParserConfig();
+	        // www.ipni.org
+	        cache.addRdfizer(MediaType.TEXT_XML, new VerbatimRdfizer(RDFFormat.RDFXML, parserConfig), 0.4);
 		}
 
 		LinkedDataSail linkedDataSail = new LinkedDataSail(cache);

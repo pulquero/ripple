@@ -144,8 +144,6 @@ public class LinkedDataCache {
             }
         }
 
-        cache.addRdfizer(MediaType.TEXT_XML, new VerbatimRdfizer(RDFFormat.RDFXML, parserConfig), 0.4);
-
         // Additional rdfizers
         Rdfizer imageRdfizer = new ImageRdfizer();
         // Mainstream EXIF-compatible image types: JPEG, TIFF
