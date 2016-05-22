@@ -222,6 +222,7 @@ public class LinkedDataCache {
         try {
             SailConnection sc = getSailConnection();
             if (null != sc) {
+            	sc.commit();
                 sc.close();
             }
         } catch (SailException e) {
