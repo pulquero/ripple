@@ -27,7 +27,6 @@ public class LinkedDataSailConfig extends AbstractDelegatingSailImplConfig {
 	static {
 		ValueFactory vf = SimpleValueFactory.getInstance();
 		MBEAN_NAME_PROPERTY = vf.createIRI(NAMESPACE+"mbeanName");
-
 	}
 
 	private final Map<MediaType, Rdfizer> rdfizers = new HashMap<>();
