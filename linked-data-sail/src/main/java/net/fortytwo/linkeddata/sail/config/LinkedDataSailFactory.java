@@ -1,6 +1,10 @@
 package net.fortytwo.linkeddata.sail.config;
 
+import java.lang.management.ManagementFactory;
 import java.util.Map;
+
+import javax.management.JMException;
+import javax.management.ObjectName;
 
 import org.eclipse.rdf4j.sail.Sail;
 import org.eclipse.rdf4j.sail.config.SailConfigException;
@@ -10,6 +14,7 @@ import org.restlet.data.MediaType;
 
 import net.fortytwo.linkeddata.LinkedDataCache;
 import net.fortytwo.linkeddata.Rdfizer;
+import net.fortytwo.linkeddata.management.ManagedLinkedDataCache;
 import net.fortytwo.linkeddata.sail.LinkedDataSail;
 
 public class LinkedDataSailFactory implements SailFactory {
@@ -46,6 +51,16 @@ public class LinkedDataSailFactory implements SailFactory {
 			for(Map.Entry<MediaType, Rdfizer> entry : ldConfig.getRdfizers().entrySet())
 			{
 				cache.addRdfizer(entry.getKey(), entry.getValue(), 0.4);
+			}
+
+			if(ldConfig.getMBeanName() != null)
+			{
+				Object mbean = ManagedLinkedDataCache.createMXBean(cache);
+				try {
+					ManagementFactory.getPlatformMBeanServer().registerMBean(mbean, ObjectName.getInstance(ldConfig.getMBeanName()));
+				} catch (JMException e) {
+					throw new SailConfigException(e);
+				}
 			}
 		}
 

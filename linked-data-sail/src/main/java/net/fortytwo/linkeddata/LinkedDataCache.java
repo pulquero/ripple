@@ -3,13 +3,18 @@ package net.fortytwo.linkeddata;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.ParserConfig;
@@ -57,7 +62,7 @@ public class LinkedDataCache {
     public static final IRI
             CACHE_MEMO = SimpleValueFactory.getInstance().createIRI(CACHE_NS + "memo"),
             CACHE_REDIRECTSTO = SimpleValueFactory.getInstance().createIRI(CACHE_NS + "redirectsTo"),
-            CACHE_GRAPH = SimpleValueFactory.getInstance().createIRI("http://fortytwo.net/2012/02/linkeddata/cache");  // the default context is used for caching metadata
+            CACHE_GRAPH = SimpleValueFactory.getInstance().createIRI("http://fortytwo.net/2012/02/linkeddata/cache");
 
     private static final String[] NON_RDF_EXTENSIONS = {
             "123", "3dm", "3dmf", "3gp", "8bi", "aac", "ai", "aif", "app", "asf",
@@ -196,7 +201,15 @@ public class LinkedDataCache {
 
         SailConnection sc = getSailConnection();
         try {
-            sc.clear();
+        	List<Resource> contexts = new ArrayList<>();
+        	contexts.add(CACHE_GRAPH);
+        	try(CloseableIteration<? extends Statement,SailException> iter = sc.getStatements(null, CACHE_MEMO, null, false, CACHE_GRAPH)) {
+        		while(iter.hasNext()) {
+        			Statement stmt = iter.next();
+        			contexts.add(stmt.getSubject());
+        		}
+        	}
+            sc.clear(contexts.toArray(new Resource[contexts.size()]));
             sc.commit();
             sc.begin();
         } catch (SailException e) {
