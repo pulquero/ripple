@@ -1,5 +1,7 @@
 package net.fortytwo.linkeddata.management;
 
+import net.fortytwo.ripple.RippleException;
+
 public interface LinkedDataCacheMXBean {
     boolean isDereferenceSubjectsEnabled();
     void setDereferenceSubjectsEnabled(boolean flag);
@@ -10,5 +12,5 @@ public interface LinkedDataCacheMXBean {
     boolean isDereferenceContextsEnabled();
     void setDereferenceContextsEnabled(boolean flag);
 
-    void clear();
+    void clear() throws RippleException;
 }

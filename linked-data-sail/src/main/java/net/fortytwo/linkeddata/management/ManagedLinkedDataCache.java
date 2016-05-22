@@ -9,6 +9,7 @@ import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.base.FinalizableWeakReference;
 
 import net.fortytwo.linkeddata.LinkedDataCache;
+import net.fortytwo.ripple.RippleException;
 
 public class ManagedLinkedDataCache extends StandardMBean implements LinkedDataCacheMXBean {
 	private static final FinalizableReferenceQueue REF_QUEUE = new FinalizableReferenceQueue();
@@ -97,8 +98,8 @@ public class ManagedLinkedDataCache extends StandardMBean implements LinkedDataC
 		cacheRef.get().setDereferenceContexts(flag);
 	}
 
-	public void clear() {
+	public void clear() throws RippleException {
 		checkCachePresent();
-		clear();
+		cacheRef.get().clear();
 	}
 }
