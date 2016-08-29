@@ -21,6 +21,7 @@ public class Bio2RdfRedirectMapping implements RedirectMapping {
 	public String translate(String redirectUrl, URL originalUrl) {
 		String host = originalUrl.getHost();
 		int port = originalUrl.getPort();
-		return redirectUrl.replace("localhost:8890", host + ":" + port);
+		String addr = (port != -1) ? host + ":" + port : host;
+		return redirectUrl.replace("localhost:8890", addr);
 	}
 }
