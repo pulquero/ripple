@@ -49,7 +49,7 @@ public class HTTPRepresentation extends StreamRepresentation {
 
     static {
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(
-				"net/fortytwo/linkeddata/redirect-mappings.properties");
+				"net/fortytwo/linkeddata/dereferencers/redirect-mappings.properties");
 		if (in != null) {
 			try {
 				redirectMappingConfig.load(in);
