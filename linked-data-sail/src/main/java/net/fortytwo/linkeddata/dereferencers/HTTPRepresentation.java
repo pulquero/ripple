@@ -7,7 +7,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -37,7 +42,26 @@ public class HTTPRepresentation extends StreamRepresentation {
     // among all threads for maximum efficiency"
     private static final HttpClient client;
 
+	private static final Properties redirectMappingConfig = new Properties();
+
+	private static final Map<String, RedirectMapping> redirectMappings = Collections.synchronizedMap(
+			new HashMap<String, RedirectMapping>());
+
     static {
+		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(
+				"net/fortytwo/linkeddata/redirect-mappings.properties");
+		if (in != null) {
+			try {
+				redirectMappingConfig.load(in);
+			}
+			catch (IOException e) {
+				logger.error("failed to initialize", e);
+				throw new ExceptionInInitializerError(e);
+			}
+			finally {
+				IOUtils.closeQuietly(in);
+			}
+		}
         try {
             client = HTTPUtils.createClient(false);
         } catch (RippleException e) {
@@ -98,7 +122,9 @@ public class HTTPRepresentation extends StreamRepresentation {
                         throw new RippleException(e);
                     }
 
-                    try {
+					redirectUrl = performRedirectTranslation(redirectUrl, getUrl);
+
+					try {
                         getUrl = new URL(redirectUrl);
                     } catch (MalformedURLException e) {
                         throw new RippleException(e);
@@ -151,6 +177,30 @@ public class HTTPRepresentation extends StreamRepresentation {
         MediaType mt = new MediaType(mtStr);
         setMediaType(mt);
     }
+
+	private String performRedirectTranslation(String redirectUrl, URL getUrl)
+		throws RippleException
+	{
+		String host = getUrl.getHost();
+		RedirectMapping redirectMapping = redirectMappings.get(host);
+		if (redirectMapping == null) {
+			String mappingClassName = redirectMappingConfig.getProperty(host);
+			if (mappingClassName != null) {
+				try {
+					redirectMapping = (RedirectMapping)Thread.currentThread().getContextClassLoader().loadClass(
+							mappingClassName).newInstance();
+					redirectMappings.put(host, redirectMapping);
+				}
+				catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+					throw new RippleException(e);
+				}
+			}
+		}
+		if (redirectMapping != null) {
+			redirectUrl = redirectMapping.translate(redirectUrl, getUrl);
+		}
+		return redirectUrl;
+	}
 
     public ReadableByteChannel getChannel() throws IOException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
