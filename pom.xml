@@ -52,7 +52,7 @@
         <junit.version>4.12</junit.version>
         <restlet.version>2.2.2</restlet.version>
         <ripple.version>1.3</ripple.version>
-        <rdf4j.version>1.0-SNAPSHOT</rdf4j.version>
+        <rdf4j.version>1.0.1-SNAPSHOT</rdf4j.version>
         <sesametools.version>1.9.1-SNAPSHOT</sesametools.version>
         <tinkerpop.version>2.6.0</tinkerpop.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
